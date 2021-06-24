@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="ZXing for JS">
+  <title>ZXing Decoding from camera stream</title>
+  <!-- <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script> -->
+  <script type="text/javascript" src="zxing.min.js"></script>
+</head>
+
+<body>
+  <div>
+    <h1 id="entry">Scan 1D/2D Code from Video Camera</h1>
+    <div>
+      <button onclick="initScan()">Start</button>
+      <button onclick="reset()">Reset</button>
+    </div>
+    <div>
+      <video id="video" style="border: 1px solid gray"></video>
+    </div>
+
+    <label>Result:</label>
+    <pre><code id="result"></code></pre>
+  </div>
+  <script src="alloy-lever.js"></script>
+  <script>
+    AlloyLever.config({
+      cdn:'//s.url.cn/qqun/qun/qqweb/m/qun/confession/js/vconsole.min.js',  //vconsole的CDN地址
+      reportUrl: "//a.qq.com",  //错误上报地址
+      reportPrefix: 'qun',    //错误上报msg前缀，一般用于标识业务类型
+      reportKey: 'msg',        //错误上报msg前缀的key，用户上报系统接收存储msg
+      otherReport: {              //需要上报的其他信息
+        uin: 491862102
+      },
+      entry:"#entry"          //请点击这个DOM元素6次召唤vConsole。//你可以通过AlloyLever.entry('#entry2')设置多个机关入口召唤神龙
+    })
+  </script>
+  <script type="text/javascript">
+    let selectedDeviceId;
+    let codeReader;
+    var video = document.getElementById('video');
+    window.addEventListener('load', () => {
+      codeReader = new ZXing.BrowserMultiFormatReader();
+    })
+
+    // 初始化
+    function initScan () {
+      navigator.mediaDevices.enumerateDevices().then((devices) => {
+        console.log(devices);
+        let constraints;
+        devices.forEach((item, i) => {
+          if (item.label === 'Microsoft Camera Rear') {
+            selectedDeviceId = item.deviceId;
+          }
+        })
+        if (isSurface() && selectedDeviceId) {
+          constraints = { video: { deviceId: { exact: selectedDeviceId }}}
+          navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+            video.srcObject = stream;
+            barScan();
+          })
+        } else if (isSurface()) {
+          constraints = { video: { facingMode: { exact: "environment" }}};
+          navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+            console.log(stream);
+            stream.getTracks().forEach((track) => {
+              track.stop();
+            })
+            initScan();
+          })
+        } else {
+          barScan();
+        }
+      });
+    }
+    // 扫描
+    function barScan () {
+      codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
+        if (result) {
+          console.log(result);
+          video.pause();
+          video.srcObject.getTracks().forEach((track) => {
+            track.stop();
+          })
+          document.getElementById('result').textContent = result.text;
+        }
+        if (err && !(err instanceof ZXing.NotFoundException)) {
+          console.error(err)
+          document.getElementById('result').textContent = err;
+        }
+      })
+    }
+    function reset () {
+      codeReader.reset();
+      document.getElementById('result').textContent = '';
+    }
+    // isSurface
+    function isSurface () {
+      let u = navigator.userAgent;
+      let isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1;   //判断是否是 android终端
+      let isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);     //判断是否是 iOS终端
+      return navigator.maxTouchPoints > 0 && !isAndroid && !isIOS;
+    }
+  </script>
+
+</body>
+
+</html>
