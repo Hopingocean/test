@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Socket.IO chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font: 13px Helvetica, Arial;
+    }
+
+    form {
+      background: #000;
+      padding: 3px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    form input {
+      border: 0;
+      padding: 10px;
+      width: 90%;
+      margin-right: .5%;
+    }
+
+    form button {
+      width: 9%;
+      background: rgb(130, 224, 255);
+      border: none;
+      padding: 10px;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #messages li {
+      padding: 5px 10px;
+    }
+
+    #messages li:nth-child(odd) {
+      background: #eee;
+    }
+  </style>
+</head>
+
+<body>
+  <ul id="messages"></ul>
+  <button id="print" onclick=window.print();>打印</button>
+  <form id="printJS-form" action="">
+    <input id="msg" autocomplete="off" />
+    <button>Send</button>
+  </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="/print-js/dist/print.js"></script>
+  <script>
+    $(function () {
+      console.log(new Date());
+      var socket = io({ timeout: 20000, reconnectionAttempts: 3 });
+      // 发送信息
+      $('form').submit(function(e) {
+        e.preventDefault();
+        socket.emit('chat message', $('#msg').val());
+        $('#msg').val('');
+        return false;
+      });
+      socket.on('chat message', function(msg) {
+        $('#messages').append($('<li>').text(msg));
+      });
+      socket.on('connect_error', function (reason) {
+        console.log('connect_error:' + reason);
+      });
+      socket.on('connect_timeout', function (reason) {
+        console.log('connect_timeout:' + reason);
+      });
+      socket.on('disconnect', function (reason) {
+        console.log('disconnect:' + reason);
+      });
+      socket.on('reconnect', function (reason) {
+        console.log('reconnect:' + reason);
+      });
+      socket.on('reconnect_attempt', function (reason) {
+        console.log('reconnect_attempt:' + reason);
+      });
+      socket.on('reconnecting', function (reason) {
+        console.log('reconnecting:' + reason);
+      });
+      socket.on('reconnect_error', function (reason) {
+        console.log('reconnect_error:' + reason);
+      });
+      socket.on('reconnect_failed', function (reason) {
+        console.log('reconnect_failed:' + reason);
+      });
+      socket.on('ping', function (reason) {
+        console.log('ping:' + reason);
+        console.log(new Date());
+      });
+      socket.on('pong', function (reason) {
+        console.log('pong:' + reason);
+      });
+    })
+  </script>
+</body>
+</html>
