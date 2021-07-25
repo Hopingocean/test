@@ -1,6 +1,7 @@
 # Demo
 用于学习/项目Demo展示
 
+### browser 浏览器基础原理
 ### es6 es6基础语法
 ### myOpenDataContext 微信小游戏开放域
 ### python python基础语法
