@@ -18,10 +18,30 @@ function showName () {
 }
 
 // 测试
-testName();
+// testName();
 var testName = function() {
     console.log(2);
 }
 function testName () {
     console.log(1);
 }
+
+// let const var
+/**
+ * let会生成块级作用域，只能在当前作用域内使用
+ */
+function foo () {
+    var a = 1;
+    let b = 2;
+    {
+        let b = 3;
+        var c = 4;
+        let d = 5;
+        console.log(a); // 1
+        console.log(b); // 3
+    }
+    console.log(b); // 2
+    console.log(c); // 4
+    console.log(d); // di is not defined
+}
+foo();
