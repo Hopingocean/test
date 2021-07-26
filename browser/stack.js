@@ -26,21 +26,19 @@ function runStack (n) {
     if (n === 1) return 1;
     return runStack(n - 1) + runStack(n - 2);
 }
-runStack(50000);
+runStack(10000);
 
 // 存储变量值，减少函数调用
+let arr = [0, 1];
 function testStack (n) {
-    let arr = [0, 1];
-    return function (n) {
-        let result = arr[n];
-        if (typeof result !== "number") {
-            result = testStack(n - 1) + testStack(n - 2);
-            arr[n] = result;
-        }
-        return result;
+    let result = arr[n];
+    if (typeof result !== "number") {
+        result = testStack(n - 1) + testStack(n - 2);
+        arr[n] = result;
     }
+    return result;
 }
-testStack(50000)
+testStack(10000)
 // 递推法
 function testStack1 (n) {
     let cur = 0;
@@ -54,10 +52,10 @@ function testStack1 (n) {
     return cur;
 }
 testStack1(50000)
-// 尾调用
+// 尾调用(垃圾)
 function testStack2 (n, cur = 0, next = 1) {
     if (n == 0) return 0;
     if (n === 1) return next;
     return testStack2(n - 1, next, cur + next);
 }
-testStack2(50000)
+testStack2(10000)
