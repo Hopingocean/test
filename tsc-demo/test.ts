@@ -2,6 +2,7 @@
 interface Person {
   first: string;
   second: number;
+  fullname: string
 };
 
 // 类
@@ -13,7 +14,7 @@ class Student {
 }
 
 function test(person: Person) {
-  return "Person," + person.first + '-' +person.second;
+  return "Person," + person.first + '-' + person.second + '-' + person.fullname;
 }
 
 // let user = 'Test';
