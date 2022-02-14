@@ -41,3 +41,124 @@ interface SquareConfigExtra {
 } // 最佳方法是添加一个字符串索引签名
 let squareOptions = {color: 'xxx', b: 100}; // 将对象赋值给另一个变量
 let mySquareExtra1 = createSquare(squareOptions);
+
+// 函数类型(定义参数列表和返回值类型)
+interface SearchFunc {
+  (source: string, subString: string): boolean;
+}
+let mySearch: SearchFunc;
+mySearch = function (src: string, sub: string): boolean {
+  let result = src.search(sub);
+  return result > -1;
+}
+
+// 可索引的类型
+interface StringArray {
+  [index: number]: string;
+}
+let myArray: StringArray;
+myArray = ['bob', 'fred'];
+let myStr: string = myArray[0];
+
+interface ReadonlyStringArray {
+  readonly [index: number]: string;
+}
+let myReadonlyArray: ReadonlyStringArray;
+myReadonlyArray = ['xxx', 'yyy'];
+// myReadonlyArray[2] = 'zzz'; // error
+
+// 类类型，实现接口
+// interface ClockInterface {
+//   currentTime: Date;
+//   setTime(d: Date);
+// }
+// class Clock implements ClockInterface {
+//   currentTime: Date;
+//   setTime(d: Date) {
+//       this.currentTime = d;
+//   };
+//   constructor(h: number, m: number) {}
+// }
+
+interface ClockConstructor {
+  new (hour: number, minute: number): ClockInterface;
+}
+interface ClockInterface {
+  tick();
+}
+function createClock(ctor: ClockConstructor, hour: number, minute: number): ClockInterface {
+  return new ctor(hour, minute);
+}
+class DigitalClock implements ClockInterface {
+  constructor(h: number, m: number) {};
+  tick() {
+    console.log('beep beep');
+  }
+}
+class AnalogClock implements ClockInterface {
+  constructor(h: number, m:number) {};
+  tick() {
+    console.log('tick tock');
+  }
+}
+let digital = createClock(DigitalClock, 12, 17);
+let analog = createClock(AnalogClock, 7, 32);
+
+// 继承接口
+interface Shape {
+  color: string;
+}
+interface PenStroke {
+  penWidth: number;
+}
+interface Square extends Shape, PenStroke {
+  sideLength: number;
+}
+let square = <Square>{};
+square.color = 'blue';
+square.penWidth = 5;
+square.sideLength = 10;
+
+// 混合类型
+interface Counter {
+  (start: number): string;
+  interval: number;
+  reset():void;
+}
+function getCounter(): Counter {
+  let counter = <Counter>function (start: number) {};
+  counter.interval = 123;
+  counter.reset = function () {};
+  return counter;
+}
+let c = getCounter();
+c(10);
+c.reset();
+c.interval = 5;
+
+// 接口继承类
+class Control {
+  private state: any;
+}
+
+interface SelectableControl extends Control {
+  select(): void;
+}
+
+class Button extends Control implements SelectableControl {
+  select(): void {
+      
+  }
+}
+
+class TextBox extends Control {
+  select() {};
+}
+// error, Image类型缺少state属性
+// class Image implements SelectableControl {
+//   select(): void {
+      
+//   }
+// }
+
+// class Location {};
