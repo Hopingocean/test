@@ -56,7 +56,7 @@ class C {
   p: 12;
   m () {}
 }
-let c = new C();
-let clone = {...c};
+let cl = new C();
+let clone = {...cl};
 clone.p; // ok
 // clone.m(); // error
