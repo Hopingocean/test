@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AntV-X6</title>
+  <style>
+    #canvas {
+      position: relative;
+    }
+    #minimapContainer {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    .my-selecting {
+      border: 1px solid red;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas">
+    <div class="bar">
+      <button onclick="addNode()">添加</button>
+      <button onclick="toJSON()">保存</button>
+    </div>
+    <div id="container"></div>
+    <div id="minimapContainer"></div>
+  </div>
+  <script src="https://unpkg.com/@antv/x6/dist/x6.js"></script>
+  <script src="data.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
